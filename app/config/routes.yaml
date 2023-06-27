@@ -19,3 +19,8 @@ calculate_total_amount:
     path: /cart/total
     controller: App\Controller\CartController::calculateTotalAmount
     methods: GET
+
+clear_cart:
+    path: /cart/clear
+    controller: App\Controller\CartController::clearCart
+    methods: GET

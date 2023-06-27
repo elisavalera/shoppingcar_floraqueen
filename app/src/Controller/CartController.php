@@ -33,21 +33,29 @@ class CartController extends AbstractController
             return new JsonResponse(['error' => 'Invalid JSON payload.'], 400);
         }
 
-        $item = $requestData['item'] ?? null;
+        $items = $requestData['items'] ?? null;
+        $responses = [];
+        // Process each item and add it to the cart
+        foreach ($items as $item) {
+            // Validate the item parameter
+            $errors = $this->validator->validate($item, new Assert\NotBlank());
 
-        // Validate the item parameter
-        $errors = $this->validator->validate($item, new Assert\NotBlank());
+            if (count($errors) > 0) {
+                return new JsonResponse(['error' => 'Invalid item parameter.'], 400);
+            }
 
-        if (count($errors) > 0) {
-            return new JsonResponse(['error' => 'Invalid item parameter.'], 400);
+            
+            // Add the item to the cart
+            if ($this->cartService->addItem($item)) {
+                $responses[] = "Item $item added to the cart.";
+            } else {
+                return new JsonResponse(['error' => 'Failed to add item to the cart.'], 500);
+            }
         }
 
-        // Add the item to the cart
-        if ($this->cartService->addItem($item)) {
-            return new JsonResponse(['message' => 'Item added to the cart.']);
-        } else {
-            return new JsonResponse(['error' => 'Failed to add item to the cart.'], 500);
-        }
+        // Calculate the total amount and display it
+        $totalAmount = $this->cartService->calculateTotalAmount();
+        return new JsonResponse(['message' => $responses, 'total' =>sprintf('Total cart amount: %s', $totalAmount)]);
     }
 
     /**
@@ -70,5 +78,15 @@ class CartController extends AbstractController
         $totalAmount = $this->cartService->calculateTotalAmount();
 
         return new JsonResponse(['total_amount' => $totalAmount]);
+    }
+
+    /**
+     * @Route("/cart/clear", name="clear_cart", methods={"POST"})
+     */
+    public function clearCart(): JsonResponse
+    {
+        $this->cartService->clearCart();
+
+        return new JsonResponse(['message' => 'Cart cleared.']);
     }
 }

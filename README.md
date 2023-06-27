@@ -74,26 +74,20 @@ The application provides the following API endpoints:
  Example:
  URL: http://localhost:8080/cart
 
- JSON Add Product B: 
+ JSON : 
  ```bash
  {
-  "item": "ProductB"
- }
-```
-
- JSON Add Product A: 
-```bash
- {
-  "item": "ProductA"
- }
-```
-
-JSON Add Voucher: 
- ```bash
-{
-  "item": "VoucherV"
+  "items": [
+    "ProductA",
+    "VoucherS",
+    "ProductA",
+    "VoucherV",
+    "ProductB"
+  ]
 }
+
 ```
+
 
 `GET /cart`: Retrieve the cart details.
 
@@ -104,17 +98,42 @@ JSON:
  ```bash
 [
     {
-        "id": 1,
-        "name": "ProductB",
-        "price": "8.00"
-    },
-    {
-        "id": 2,
+        "id": 8,
         "name": "ProductA",
         "price": "10.00"
     },
     {
-        "id": 1,
+        "id": 9,
+        "name": "ProductB",
+        "price": "8.00"
+    },
+    {
+        "id": 10,
+        "name": "ProductA",
+        "price": "10.00"
+    },
+    {
+        "id": 11,
+        "name": "ProductA",
+        "price": "10.00"
+    },
+    {
+        "id": 12,
+        "name": "ProductB",
+        "price": "8.00"
+    },
+    {
+        "id": 5,
+        "name": "VoucherV",
+        "price": 0
+    },
+    {
+        "id": 6,
+        "name": "VoucherS",
+        "price": 0
+    },
+    {
+        "id": 7,
         "name": "VoucherV",
         "price": 0
     }
@@ -129,7 +148,18 @@ URL: http://localhost:8080/cart/total
 JSON:
  ```bash
 {
-    "total_amount": 18
+    "total_amount": 46
+}
+```
+
+`GET /cart/clear`: Clear All of the cart.
+Example:
+URL: http://localhost:8080/cart/clear
+
+JSON:
+ ```bash
+{
+    "message": "Cart cleared."
 }
 ```
 
@@ -140,6 +170,8 @@ To run the tests, use the following command:
 ```bash
 php ./vendor/bin/phpunit
 ```
+
+🚀 NOTE: "Unit tests have not been tested due to lack of time."
 
 ### Folder Structure
 `app/`: Symfony application files.

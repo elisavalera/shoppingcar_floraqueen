@@ -134,4 +134,20 @@ class CartService
 
         return $cart;
     }
+
+    public function clearCart(): void
+    {
+        $cartProducts = $this->entityManager->getRepository(Product::class)->findAll();
+        $cartVouchers = $this->entityManager->getRepository(Voucher::class)->findAll();
+        
+        foreach ($cartProducts as $product) {
+            $this->entityManager->remove($product);
+        }
+    
+        foreach ($cartVouchers as $voucher) {
+            $this->entityManager->remove($voucher);
+        }
+    
+        $this->entityManager->flush();
+    }
 }
