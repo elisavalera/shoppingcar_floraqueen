@@ -3,3 +3,19 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+
+cart_add_item:
+    path: /cart
+    methods: POST
+    controller: App\Controller\CartController::addItemToCart
+
+cart_get_item:
+    path: /cart
+    methods: GET
+    controller: App\Controller\CartController::getCart
+
+calculate_total_amount:
+    path: /cart/total
+    controller: App\Controller\CartController::calculateTotalAmount
+    methods: GET

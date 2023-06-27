@@ -2,14 +2,39 @@
 
 namespace App\Service;
 
+use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Product;
+use App\Entity\Voucher;
+use App\Repository\ProductRepository;
+
 class CartService
 {
     private $items = [];
 
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     public function addItem(string $item): bool
     {
-        // Add the item to the cart
-        $this->items[] = $item;
+        if ($this->isProduct($item)) {
+            // Add the item to the cart
+            $cartItem = new Product();
+            $cartItem->setName($item);
+            $cartItem->setDescription($item);
+            $cartItem->setPrice($this->calculateProductPrice($item));
+        } elseif ($this->isVoucher($item)) {
+            $cartItem = new Voucher();
+            $cartItem->setCode($item);
+            $cartItem->setType($item);
+            $cartItem->setValue($this->calculateVoucherPrice($item));
+        }
+        
+
+        // Persist the entity
+        $this->entityManager->persist($cartItem);
+        $this->entityManager->flush();
 
         return true;
     }
@@ -17,15 +42,21 @@ class CartService
     public function calculateTotalAmount(): float
     {
         $totalAmount = 0;
+        $cartProducts = $this->entityManager->getRepository(Product::class)->findAll();
+        $cartVouchers = $this->entityManager->getRepository(Voucher::class)->findAll();
 
-        // Loop through the items in the cart and calculate the total amount
-        foreach ($this->items as $item) {
-            // Determine the item type (product or voucher) and calculate the price accordingly
-            if ($this->isProduct($item)) {
-                $totalAmount += $this->calculateProductPrice($item);
-            } elseif ($this->isVoucher($item)) {
-                $totalAmount += $this->calculateVoucherPrice($item);
+        foreach ($cartProducts as $product) {
+            $name = $product->getName();
+            if ($this->isProduct($product->getName())) {
+             $totalAmount += $product->getPrice();
             }
+        }
+
+        foreach ($cartVouchers as $voucher) {
+           
+            if ($this->isVoucher($voucher->getCode())) {
+                $totalAmount += $voucher->getValue();
+               }
         }
 
         return $totalAmount;
@@ -75,5 +106,32 @@ class CartService
             default:
                 return 0;
         }
+    }
+
+    public function getCart(): array
+    {
+        $cartProducts = $this->entityManager->getRepository(Product::class)->findAll();
+        $cartVouchers = $this->entityManager->getRepository(Voucher::class)->findAll();
+        $cart = [];
+
+        foreach ($cartProducts as $product) {
+           
+            $cart[] = [
+                'id' => $product->getId(),
+                'name' => $product->getName(),
+                'price' => $product->getPrice()
+            ];
+        }
+
+        foreach ($cartVouchers as $voucher) {
+           
+            $cart[] = [
+                'id' => $voucher->getId(),
+                'name' => $voucher->getCode(),
+                'price' => $voucher->getValue()
+            ];
+        }
+
+        return $cart;
     }
 }

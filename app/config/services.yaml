@@ -26,5 +26,12 @@ services:
         tags:
             - { name: 'console.command' }
 
+    App\Controller\CartController:
+        public: true
+        arguments:
+            $cartService: '@App\Service\CartService'
+            $validator: '@validator'
+
     App\Service\CartService:
-        # Define the necessary dependencies for your CartService
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'

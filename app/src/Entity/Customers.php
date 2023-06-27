@@ -2,14 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\ProductRepository;
+use App\Repository\CustomersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ProductRepository::class)]
-class Product
+#[ORM\Entity(repositoryClass: CustomersRepository::class)]
+class Customers
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -19,13 +18,13 @@ class Product
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    private ?string $price = null;
+    #[ORM\Column(length: 255)]
+    private ?string $email = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $description = null;
+    private ?string $address = null;
 
-    #[ORM\OneToMany(mappedBy: 'product', targetEntity: CartItem::class)]
+    #[ORM\OneToMany(mappedBy: 'customer', targetEntity: Orders::class)]
     private Collection $no;
 
     public function __construct()
@@ -50,54 +49,54 @@ class Product
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getEmail(): ?string
     {
-        return $this->description;
+        return $this->email;
     }
 
-    public function setDescription(string $description): static
+    public function setEmail(string $email): static
     {
-        $this->description = $description;
+        $this->email = $email;
 
         return $this;
     }
 
-    public function getPrice(): ?string
+    public function getAddress(): ?string
     {
-        return $this->price;
+        return $this->address;
     }
 
-    public function setPrice(string $price): static
+    public function setAddress(string $address): static
     {
-        $this->price = $price;
+        $this->address = $address;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, CartItem>
+     * @return Collection<int, Orders>
      */
     public function getNo(): Collection
     {
         return $this->no;
     }
 
-    public function addNo(CartItem $no): static
+    public function addNo(Orders $no): static
     {
         if (!$this->no->contains($no)) {
             $this->no->add($no);
-            $no->setProduct($this);
+            $no->setCustomer($this);
         }
 
         return $this;
     }
 
-    public function removeNo(CartItem $no): static
+    public function removeNo(Orders $no): static
     {
         if ($this->no->removeElement($no)) {
             // set the owning side to null (unless already changed)
-            if ($no->getProduct() === $this) {
-                $no->setProduct(null);
+            if ($no->getCustomer() === $this) {
+                $no->setCustomer(null);
             }
         }
 

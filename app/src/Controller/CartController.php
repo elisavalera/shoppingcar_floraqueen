@@ -8,8 +8,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class CartController
+class CartController extends AbstractController
 {
     private $cartService;
     private $validator;
@@ -25,7 +26,14 @@ class CartController
      */
     public function addToCart(Request $request): JsonResponse
     {
-        $item = $request->request->get('item');
+        
+        $requestData = json_decode($request->getContent(), true);
+
+        if ($requestData === null) {
+            return new JsonResponse(['error' => 'Invalid JSON payload.'], 400);
+        }
+
+        $item = $requestData['item'] ?? null;
 
         // Validate the item parameter
         $errors = $this->validator->validate($item, new Assert\NotBlank());

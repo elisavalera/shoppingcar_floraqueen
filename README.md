@@ -70,8 +70,69 @@ This command will add ProductA, VoucherS, ProductA, VoucherV, and ProductB to th
 ### API Endpoints
 The application provides the following API endpoints:
 `POST /cart`: Add an item to the cart. Send a JSON payload with the item parameter.
+ 
+ Example:
+ URL: http://localhost:8080/cart
+
+ JSON Add Product B: 
+ ```bash
+ {
+  "item": "ProductB"
+ }
+```
+
+ JSON Add Product A: 
+```bash
+ {
+  "item": "ProductA"
+ }
+```
+
+JSON Add Voucher: 
+ ```bash
+{
+  "item": "VoucherV"
+}
+```
+
 `GET /cart`: Retrieve the cart details.
+
+Example:
+URL: http://localhost:8080/cart
+
+JSON:
+ ```bash
+[
+    {
+        "id": 1,
+        "name": "ProductB",
+        "price": "8.00"
+    },
+    {
+        "id": 2,
+        "name": "ProductA",
+        "price": "10.00"
+    },
+    {
+        "id": 1,
+        "name": "VoucherV",
+        "price": 0
+    }
+]
+```
+
 `GET /cart/total`: Calculate the total amount of the cart.
+
+Example:
+URL: http://localhost:8080/cart/total
+
+JSON:
+ ```bash
+{
+    "total_amount": 18
+}
+```
+
 Make sure to start the development server (symfony serve) or configure a virtual host to access the API endpoints.
 
 ### Testing
