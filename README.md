@@ -138,7 +138,7 @@ Make sure to start the development server (symfony serve) or configure a virtual
 ### Testing
 To run the tests, use the following command:
 ```bash
-php bin/phpunit
+php ./vendor/bin/phpunit
 ```
 
 ### Folder Structure
